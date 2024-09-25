@@ -14,15 +14,15 @@ void setup()
   pinMode(9, OUTPUT);
   pinMode(10, OUTPUT);
   
+  digitalWrite(8, HIGH);
+  digitalWrite(9, HIGH);
+  digitalWrite(10, HIGH);
+
 }
 void loop()
 {
   // Set motor direction clockwise
   digitalWrite(dirPin, curDir);
-  digitalWrite(8, HIGH);
-  digitalWrite(9, HIGH);
-  digitalWrite(10, HIGH);
-
 
   // Spin motor slowly
   for(int x = 0; x < stepsPerRevolution; x++)
@@ -35,12 +35,7 @@ void loop()
   curStep += 1;
   Serial.println(curStep);
   if(curStep == 33) {
-    if(curDir == HIGH) {
-      curDir = LOW;
-    }
-    else {
-      curDir = HIGH;
-    }
+    curDir = !curDir;
     curStep = 1;
   }
   //	delay(1000); // Wait a second
