@@ -13,14 +13,16 @@ unsigned long curTime = 0;
 unsigned long lastMix = 0;
 int progIndex = 1;
 
-char hexaKeys[2][2] = {
-  {'1', '2'},
-  {'4', '5'}
+char hexaKeys[4][4] = {
+  {'1', '2', '3', 'A'},
+  {'4', '5', '6', 'B'},
+  {'7', '8', '9', 'C'},
+  {'*', '0', '#', 'D'}
 };
 
-byte rowPins[2] = {8, 7};
-byte colPins[2] = {6, 5};
-Keypad controlPad = Keypad(makeKeymap(hexaKeys), rowPins, colPins, 2, 2);
+byte rowPins[4] = {8, 7, 15, 16};
+byte colPins[4] = {6, 5, 17, 18};
+Keypad controlPad = Keypad(makeKeymap(hexaKeys), rowPins, colPins, 4, 4);
 
 void setup() {
   Serial.begin(9600);
@@ -48,14 +50,14 @@ void dhtRead() {
 
 void fluidIn(int flow) {
   analogWrite(SPEED_PIN, flow);
-  digitalWrite(MOTOR_PIN_1, HIGH);
-  digitalWrite(MOTOR_PIN_2, LOW);
+  digitalWrite(MOTOR_PIN_1, LOW);
+  digitalWrite(MOTOR_PIN_2, HIGH);
 }
 
 void fluidOut(int flow) {
   analogWrite(SPEED_PIN, flow);
-  digitalWrite(MOTOR_PIN_1, LOW);
-  digitalWrite(MOTOR_PIN_2, HIGH);
+  digitalWrite(MOTOR_PIN_1, HIGH);
+  digitalWrite(MOTOR_PIN_2, LOW);
 }
 
 void mixer(int flow, int time) {
@@ -102,7 +104,10 @@ void runProg(int flow, int time) {
 
 void readNumpad() {
   char readingKey = controlPad.getKey();
-  progIndex = (readingKey) ? readingKey - '0' : progIndex;
+  progIndex = (readingKey == '1' ||
+	       readingKey == '2' ||
+	       readingKey == '4' ||
+	       readingKey == '5') ? readingKey - '0' : progIndex;
   if (readingKey) {
     Serial.print("Key: ");
     Serial.print(readingKey);
@@ -115,6 +120,6 @@ void loop() {
   curTime = millis();
   //  dhtRead();
   readNumpad();
-  runProg(220, 7000);
+  runProg(220, 2000);
 // fluidIn(200);
 }
